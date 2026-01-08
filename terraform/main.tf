@@ -19,15 +19,15 @@ module "dynamodb" {
 module "lambda" {
   source = "./modules/lambda"
 
-  function_name    = var.lambda_function_name
-  runtime          = var.lambda_runtime
-  memory_size      = var.lambda_memory
-  timeout          = var.lambda_timeout
-  dynamodb_table   = module.dynamodb.table_name
-  dynamodb_arn     = module.dynamodb.table_arn
-  environment      = var.environment
-  project_name     = var.project_name
-  allowed_origins  = ["https://${var.domain_name}", "http://localhost:*"]
+  function_name   = var.lambda_function_name
+  runtime         = var.lambda_runtime
+  memory_size     = var.lambda_memory
+  timeout         = var.lambda_timeout
+  dynamodb_table  = module.dynamodb.table_name
+  dynamodb_arn    = module.dynamodb.table_arn
+  environment     = var.environment
+  project_name    = var.project_name
+  allowed_origins = ["https://${var.domain_name}", "http://localhost:*"]
 }
 
 # -----------------------------------------------------------------------------

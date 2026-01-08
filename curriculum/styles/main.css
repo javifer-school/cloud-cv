@@ -23,7 +23,9 @@
 }
 
 /* Reset & Base */
-*, *::before, *::after {
+*,
+*::before,
+*::after {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
@@ -483,7 +485,8 @@ body {
         padding: 0;
     }
 
-    .section, .header {
+    .section,
+    .header {
         box-shadow: none;
         border: 1px solid var(--border-color);
         page-break-inside: avoid;

@@ -10,6 +10,14 @@ Este proyecto implementa el [Cloud Resume Challenge](https://cloudresumechalleng
 
 🌐 **URL**: https://cv.aws10.atercates.cat
 
+### ⚡ Quick Links
+
+- 📖 [Guía de Configuración Completa](SETUP_GUIDE.md) - Variables y credenciales
+- 🗺️ [Mapa de Configuración Visual](CONFIG_MAP.md) - Dónde va cada variable
+- 🚀 [Guía de CI/CD](CICD_GUIDE.md) - Workflows de GitHub Actions
+- 📝 [Comandos Útiles](COMMANDS.md) - Make, Terraform, AWS CLI
+- 📋 [Plan de Infraestructura](PLAN_INFRAESTRUCTURA.md) - Arquitectura detallada
+
 ## 🏗️ Arquitectura
 
 ```
@@ -59,6 +67,22 @@ cloud-cv/
 - Python 3.11+
 - Zona DNS `atercates.cat` configurada en Route53
 
+### Quick Start
+
+```bash
+# 1. Verificar que todo esté listo
+make check
+
+# 2. Instalar dependencias
+make init
+
+# 3. Ejecutar tests
+make test
+
+# 4. Desplegar infraestructura
+make tf-apply
+```
+
 ### Variables de Entorno / Secretos de GitHub
 
 Configura estos secretos en tu repositorio de GitHub:
@@ -68,6 +92,8 @@ Configura estos secretos en tu repositorio de GitHub:
 | `AWS_ACCESS_KEY_ID` | AWS Access Key |
 | `AWS_SECRET_ACCESS_KEY` | AWS Secret Key |
 | `GH_TOKEN_AMPLIFY` | Token de GitHub para Amplify |
+
+Para más detalles sobre secretos, ver [CICD_GUIDE.md](CICD_GUIDE.md)
 
 ### Despliegue Manual
 
@@ -87,21 +113,45 @@ terraform plan -var="github_token=YOUR_TOKEN"
 terraform apply -var="github_token=YOUR_TOKEN"
 ```
 
-### Despliegue Automático
+### Despliegue Automático (CI/CD)
 
 Los cambios en `main` activan automáticamente los pipelines correspondientes:
-- Cambios en `/curriculum` → Frontend Deploy
-- Cambios en `/lambda` → Backend Deploy (con tests)
-- Cambios en `/terraform` → Terraform Plan/Apply
+
+| Cambios en | Workflow | Acciones |
+|-----------|----------|----------|
+| `/curriculum/**` | Frontend Deploy | Build → Deploy a Amplify |
+| `/lambda/**` | Backend Deploy | Tests → Package → Deploy Lambda |
+| `/terraform/**` | Terraform Deploy | Format → Validate → Plan → Apply |
+
+📖 **Guía completa de CI/CD:** [CICD_GUIDE.md](CICD_GUIDE.md)
 
 ## 🧪 Tests
 
+### Ejecutar tests localmente
+
 ```bash
-# Ejecutar tests de la Lambda
+# Opción 1: Con Make
+make test          # Tests básicos
+make test-cov      # Tests con coverage
+make dev-test      # Tests + abrir reporte HTML
+
+# Opción 2: Manual
 cd lambda
 pip install -r tests/requirements-test.txt
 pytest tests/ -v --cov=visit_counter
 ```
+
+### Coverage esperado
+
+El proyecto incluye 20+ tests unitarios que cubren:
+- ✅ Extracción de IP de visitante
+- ✅ Headers CORS
+- ✅ Manejo de GET/POST requests
+- ✅ Operaciones DynamoDB
+- ✅ Gestión de errores
+- ✅ Integración completa
+
+Target: **>90% coverage**
 
 ## 📊 API Endpoints
 

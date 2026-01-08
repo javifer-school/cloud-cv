@@ -61,7 +61,7 @@ async function registerVisit() {
 
         const data = await response.json();
         displayVisitCount(data);
-        
+
         console.log('Visit registered:', data);
     } catch (error) {
         console.error('Error registering visit:', error);
@@ -88,7 +88,7 @@ async function getVisitCount() {
 
         const data = await response.json();
         displayVisitCount(data);
-        
+
         console.log('Visit count retrieved:', data);
     } catch (error) {
         console.error('Error getting visit count:', error);
