@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Curriculum Vitae - Cloud Resume Challenge">
+    <title>Mi Curriculum - Cloud CV</title>
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <!-- Header Section -->
+        <header class="header">
+            <div class="profile">
+                <div class="avatar">
+                    <img src="images/avatar.svg" alt="Avatar" class="avatar-img">
+                </div>
+                <div class="profile-info">
+                    <h1 class="name">Tu Nombre Aquí</h1>
+                    <p class="title">Cloud Engineer / DevOps</p>
+                    <p class="location">📍 Barcelona, España</p>
+                </div>
+            </div>
+            <div class="contact-info">
+                <a href="mailto:email@example.com" class="contact-link">
+                    <span class="icon">📧</span> email@example.com
+                </a>
+                <a href="https://linkedin.com/in/username" target="_blank" class="contact-link">
+                    <span class="icon">💼</span> LinkedIn
+                </a>
+                <a href="https://github.com/username" target="_blank" class="contact-link">
+                    <span class="icon">💻</span> GitHub
+                </a>
+            </div>
+        </header>
+
+        <!-- Visit Counter -->
+        <div class="visit-counter">
+            <span id="visitor-count">Cargando visitas...</span>
+        </div>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- About Section -->
+            <section class="section about">
+                <h2 class="section-title">Sobre Mí</h2>
+                <p class="about-text">
+                    Estudiante de ASIX (Administración de Sistemas Informáticos en Red) 
+                    apasionado por las tecnologías cloud y la automatización. 
+                    Este curriculum vitae está desplegado en AWS como parte del 
+                    <strong>Cloud Resume Challenge</strong>, demostrando habilidades prácticas 
+                    en infraestructura como código, CI/CD y servicios serverless.
+                </p>
+            </section>
+
+            <!-- Skills Section -->
+            <section class="section skills">
+                <h2 class="section-title">Habilidades Técnicas</h2>
+                <div class="skills-grid">
+                    <div class="skill-category">
+                        <h3>Cloud & DevOps</h3>
+                        <ul class="skill-list">
+                            <li>AWS (Lambda, DynamoDB, Amplify, Route53)</li>
+                            <li>Terraform / Infrastructure as Code</li>
+                            <li>GitHub Actions / CI/CD</li>
+                            <li>Docker & Containers</li>
+                        </ul>
+                    </div>
+                    <div class="skill-category">
+                        <h3>Lenguajes</h3>
+                        <ul class="skill-list">
+                            <li>Python</li>
+                            <li>JavaScript</li>
+                            <li>Bash / Shell Scripting</li>
+                            <li>SQL</li>
+                        </ul>
+                    </div>
+                    <div class="skill-category">
+                        <h3>Sistemas</h3>
+                        <ul class="skill-list">
+                            <li>Linux (Ubuntu, CentOS)</li>
+                            <li>Windows Server</li>
+                            <li>Networking</li>
+                            <li>Virtualización</li>
+                        </ul>
+                    </div>
+                    <div class="skill-category">
+                        <h3>Herramientas</h3>
+                        <ul class="skill-list">
+                            <li>Git & GitHub</li>
+                            <li>VS Code</li>
+                            <li>Postman / APIs REST</li>
+                            <li>Monitoring & Logging</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Experience Section -->
+            <section class="section experience">
+                <h2 class="section-title">Experiencia</h2>
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <div class="timeline-date">2025 - Presente</div>
+                        <div class="timeline-content">
+                            <h3>Cloud Resume Challenge</h3>
+                            <p class="company">Proyecto Personal - AWS</p>
+                            <ul class="achievements">
+                                <li>Desplegué este CV como sitio web estático en AWS Amplify</li>
+                                <li>Implementé contador de visitas con Lambda, API Gateway y DynamoDB</li>
+                                <li>Automaticé la infraestructura con Terraform</li>
+                                <li>Configuré pipelines CI/CD con GitHub Actions</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-date">2024 - 2025</div>
+                        <div class="timeline-content">
+                            <h3>Prácticas de Administración de Sistemas</h3>
+                            <p class="company">Empresa XYZ</p>
+                            <ul class="achievements">
+                                <li>Administración de servidores Linux y Windows</li>
+                                <li>Configuración de redes y firewalls</li>
+                                <li>Soporte técnico a usuarios</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Education Section -->
+            <section class="section education">
+                <h2 class="section-title">Formación</h2>
+                <div class="education-item">
+                    <div class="education-date">2023 - 2025</div>
+                    <div class="education-content">
+                        <h3>CFGS Administración de Sistemas Informáticos en Red (ASIX)</h3>
+                        <p class="institution">Institut ITIC Barcelona</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Certifications Section -->
+            <section class="section certifications">
+                <h2 class="section-title">Certificaciones</h2>
+                <div class="cert-grid">
+                    <div class="cert-item">
+                        <span class="cert-badge">🏆</span>
+                        <span class="cert-name">AWS Cloud Practitioner</span>
+                        <span class="cert-status">(En progreso)</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Projects Section -->
+            <section class="section projects">
+                <h2 class="section-title">Proyectos Destacados</h2>
+                <div class="projects-grid">
+                    <div class="project-card">
+                        <h3>🌐 Cloud CV</h3>
+                        <p>Este mismo currículum: web estática + API serverless + IaC</p>
+                        <div class="project-tech">
+                            <span class="tech-tag">AWS</span>
+                            <span class="tech-tag">Terraform</span>
+                            <span class="tech-tag">Python</span>
+                            <span class="tech-tag">GitHub Actions</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>Este CV está desplegado en AWS como parte del Cloud Resume Challenge</p>
+            <p>Dominio: <strong>cv.aws10.atercates.cat</strong></p>
+            <div class="tech-stack">
+                <span>Amplify</span> • 
+                <span>Lambda</span> • 
+                <span>DynamoDB</span> • 
+                <span>API Gateway</span> • 
+                <span>Route53</span> • 
+                <span>Terraform</span>
+            </div>
+        </footer>
+    </div>
+
+    <script src="scripts/visitor-counter.js"></script>
+</body>
+</html>

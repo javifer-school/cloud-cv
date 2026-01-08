@@ -1,0 +1,2 @@
+# Lambda Visit Counter - Dependencies
+# No external dependencies required - using boto3 from Lambda runtime
