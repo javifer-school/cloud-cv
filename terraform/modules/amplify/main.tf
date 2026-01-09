@@ -43,11 +43,11 @@ resource "aws_amplify_app" "cv_app" {
 
 # Amplify Branch
 resource "aws_amplify_branch" "main" {
-  app_id            = aws_amplify_app.cv_app.id
-  branch_name       = var.github_branch
-  framework         = "Web"
-  stage             = "PRODUCTION"
-  enable_auto_build = true
+  app_id                = aws_amplify_app.cv_app.id
+  branch_name           = var.github_branch
+  framework             = "Web"
+  stage                 = "PRODUCTION"
+  enable_auto_build     = true
   environment_variables = { API_ENDPOINT = var.api_endpoint }
   tags = {
     Name        = "${var.app_name}-${var.github_branch}"
@@ -60,7 +60,7 @@ resource "aws_amplify_branch" "main" {
 resource "aws_amplify_domain_association" "cv_domain" {
   app_id                = aws_amplify_app.cv_app.id
   domain_name           = var.domain_name
-  wait_for_verification = true
+  wait_for_verification = false
   sub_domain {
     branch_name = aws_amplify_branch.main.branch_name
     prefix      = ""

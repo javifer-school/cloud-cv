@@ -53,7 +53,7 @@ resource "cloudflare_record" "amplify_cname" {
   zone_id    = var.cloudflare_zone_id
   name       = trimsuffix(var.domain_name, ".${var.hosted_zone_name}")
   type       = "CNAME"
-  content    = tolist(module.amplify.domain_association_sub_domains)[0].dns_record
+  content    = module.amplify.default_domain
   ttl        = 300
   proxied    = false
   depends_on = [module.amplify]
