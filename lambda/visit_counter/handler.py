@@ -23,7 +23,7 @@ from typing import Any
 import boto3
 from botocore.exceptions import ClientError
 
-# Configure logging
+# Configure logging 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
