@@ -20,7 +20,7 @@ on:
   workflow_dispatch:
 
 env:
-  AWS_REGION: eu-west-1
+  AWS_REGION: us-east-1
   LAMBDA_FUNCTION_NAME: cv-visit-counter
   PYTHON_VERSION: '3.11'
 
