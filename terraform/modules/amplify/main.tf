@@ -100,3 +100,24 @@ resource "aws_amplify_domain_association" "cv_domain" {
 
   depends_on = [aws_amplify_branch.main]
 }
+# -----------------------------------------------------------------------------
+# Trigger Initial Deployment
+# -----------------------------------------------------------------------------
+# This resource triggers an initial deployment of the Amplify app
+# The aws_amplify_branch resource has enable_auto_build = true, but it doesn't
+# trigger a build on creation. This is a known limitation in the AWS provider.
+# Solution: Use null_resource with local-exec to trigger a build via AWS CLI
+resource "null_resource" "trigger_initial_deployment" {
+  # Triggers ensure this only runs when the branch is created/changed
+  triggers = {
+    app_id      = aws_amplify_app.cv_app.id
+    branch_name = aws_amplify_branch.main.branch_name
+  }
+
+  # Execute AWS CLI command to start a deployment job
+  provisioner "local-exec" {
+    command = "aws amplify start-job --app-id ${aws_amplify_app.cv_app.id} --branch-name ${aws_amplify_branch.main.branch_name} --job-type RELEASE"
+  }
+
+  depends_on = [aws_amplify_branch.main]
+}
