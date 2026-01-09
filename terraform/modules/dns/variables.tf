@@ -27,9 +27,3 @@ variable "use_cloudflare" {
   type        = bool
   default     = false
 }
-
-# variable "amplify_custom_domain" {
-#   description = "Amplify custom domain (if configured)"
-#   type        = string
-#   default     = ""
-# }

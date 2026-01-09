@@ -19,10 +19,9 @@ variable "github_branch" {
 }
 
 variable "github_token" {
-  description = "GitHub personal access token"
+  description = "GitHub personal access token (required for automated builds)"
   type        = string
   sensitive   = true
-  default     = ""
 }
 
 variable "domain_name" {

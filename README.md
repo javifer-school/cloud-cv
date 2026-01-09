@@ -113,6 +113,8 @@ terraform plan -var="github_token=YOUR_TOKEN"
 terraform apply -var="github_token=YOUR_TOKEN"
 ```
 
+**⚠️ IMPORTANTE**: El `github_token` es **OBLIGATORIO** para los builds automáticos de Amplify.
+
 ### Despliegue Automático (CI/CD)
 
 Los cambios en `main` activan automáticamente los pipelines correspondientes:

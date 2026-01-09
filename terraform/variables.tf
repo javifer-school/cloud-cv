@@ -53,10 +53,9 @@ variable "github_branch" {
 }
 
 variable "github_token" {
-  description = "GitHub personal access token for Amplify"
+  description = "GitHub personal access token for Amplify (required for automated builds)"
   type        = string
   sensitive   = true
-  default     = ""
 }
 
 # =============================================================================

@@ -67,5 +67,34 @@ module "dns" {
   environment      = var.environment
   project_name     = var.project_name
   use_cloudflare   = var.cloudflare_api_token != ""
-  # amplify_custom_domain   = module.amplify.amplify_default_domain  # Quitar dependencia circular
+}
+
+# =============================================================================
+# DNS CNAME Record for Amplify (created after Amplify is ready)
+# =============================================================================
+data "aws_route53_zone" "main" {
+  name = var.hosted_zone_name
+}
+
+resource "aws_route53_record" "amplify_cname" {
+  zone_id = data.aws_route53_zone.main.zone_id
+  name    = var.domain_name
+  type    = "CNAME"
+  ttl     = 300
+  records = [module.amplify.default_domain]
+
+  depends_on = [module.amplify]
+}
+
+resource "cloudflare_record" "amplify_cname" {
+  count = var.cloudflare_api_token != "" ? 1 : 0
+
+  provider = cloudflare
+  zone_id  = var.cloudflare_zone_id
+  name     = trimsuffix(var.domain_name, ".${var.hosted_zone_name}")
+  type     = "CNAME"
+  content  = module.amplify.default_domain
+  ttl      = 300
+
+  depends_on = [module.amplify]
 }

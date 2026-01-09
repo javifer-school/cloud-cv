@@ -15,7 +15,7 @@ hosted_zone_name = "atercates.cat"
 # GitHub Configuration
 github_repository = "https://github.com/javifer-school/cloud-cv"
 github_branch     = "main"
-# github_token    = "ghp_xxxxxxxxxxxx"  # Set via TF_VAR_github_token or -var flag
+github_token      = "ghp_xxxxxxxxxxxx"  # REQUIRED: GitHub personal access token for automated builds
 
 # DynamoDB Configuration
 dynamodb_table_name = "cv-visit-counter"
