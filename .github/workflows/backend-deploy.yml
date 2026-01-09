@@ -49,12 +49,12 @@ jobs:
       - name: Run tests with coverage
         run: |
           cd lambda
-          python -m pytest tests/ -v --cov=visit_counter --cov-report=xml --cov-report=term-missing
+          python -m pytest tests/ -v --cov=visit_counter --cov-report=xml:coverage.xml --cov-report=term-missing
 
       - name: Upload coverage report
         uses: codecov/codecov-action@v3
         with:
-          files: lambda/coverage.xml
+          files: ./lambda/coverage.xml
           fail_ci_if_error: false
 
   # -------------------------------------------------------------------------
