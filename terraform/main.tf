@@ -2,9 +2,9 @@
 # Cloud CV - Main Terraform Configuration
 # =============================================================================
 
-# -----------------------------------------------------------------------------
+# =============================================================================
 # DynamoDB Module - Visit Counter Table
-# -----------------------------------------------------------------------------
+# =============================================================================
 module "dynamodb" {
   source = "./modules/dynamodb"
 
@@ -13,9 +13,9 @@ module "dynamodb" {
   project_name = var.project_name
 }
 
-# -----------------------------------------------------------------------------
+# =============================================================================
 # Lambda Module - Visit Counter Function + API Gateway
-# -----------------------------------------------------------------------------
+# =============================================================================
 module "lambda" {
   source = "./modules/lambda"
 
@@ -27,29 +27,13 @@ module "lambda" {
   dynamodb_arn    = module.dynamodb.table_arn
   environment     = var.environment
   project_name    = var.project_name
-  allowed_origins = ["https://${var.domain_name}", "http://localhost:*"]
+  lambda_role_arn = var.lambda_role_arn
+  allowed_origins = ["https://${var.domain_name}", "http://localhost:3000"]
 }
 
-# -----------------------------------------------------------------------------
-# DNS Module - Route53 + ACM Certificate
-# -----------------------------------------------------------------------------
-module "dns" {
-  source = "./modules/dns"
-
-  providers = {
-    aws           = aws
-    aws.us_east_1 = aws.us_east_1
-  }
-
-  domain_name      = var.domain_name
-  hosted_zone_name = var.hosted_zone_name
-  environment      = var.environment
-  project_name     = var.project_name
-}
-
-# -----------------------------------------------------------------------------
+# =============================================================================
 # Amplify Module - Static Website Hosting
-# -----------------------------------------------------------------------------
+# =============================================================================
 module "amplify" {
   source = "./modules/amplify"
 
@@ -64,4 +48,24 @@ module "amplify" {
   project_name      = var.project_name
 
   depends_on = [module.dns]
+}
+
+# =============================================================================
+# DNS Module - Route53 + ACM Certificate + Cloudflare
+# =============================================================================
+module "dns" {
+  source = "./modules/dns"
+
+  providers = {
+    aws           = aws
+    aws.us_east_1 = aws.us_east_1
+    cloudflare    = cloudflare
+  }
+
+  domain_name      = var.domain_name
+  hosted_zone_name = var.hosted_zone_name
+  environment      = var.environment
+  project_name     = var.project_name
+  use_cloudflare   = var.cloudflare_api_token != ""
+  # amplify_custom_domain   = module.amplify.amplify_default_domain  # Quitar dependencia circular
 }

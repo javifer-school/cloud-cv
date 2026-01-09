@@ -21,3 +21,15 @@ variable "project_name" {
   description = "Project name for tagging"
   type        = string
 }
+
+variable "use_cloudflare" {
+  description = "Use Cloudflare DNS instead of Route53"
+  type        = bool
+  default     = false
+}
+
+# variable "amplify_custom_domain" {
+#   description = "Amplify custom domain (if configured)"
+#   type        = string
+#   default     = ""
+# }

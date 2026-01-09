@@ -1,5 +1,5 @@
 # =============================================================================
-# DNS Module - Route53 + ACM Certificate
+# DNS Module - Route53 + ACM Certificate + Cloudflare DNS
 # =============================================================================
 
 terraform {
@@ -8,15 +8,46 @@ terraform {
       source                = "hashicorp/aws"
       configuration_aliases = [aws, aws.us_east_1]
     }
+    cloudflare = {
+      source = "cloudflare/cloudflare"
+    }
   }
 }
 
-# -----------------------------------------------------------------------------
-# Data: Existing Hosted Zone
-# -----------------------------------------------------------------------------
+# =============================================================================
+# Data: Fetch existing Cloudflare Zone
+# =============================================================================
+data "cloudflare_zone" "main" {
+  count = var.use_cloudflare ? 1 : 0
+  name  = var.hosted_zone_name
+}
+
+# =============================================================================
+# Data: Try to find existing Hosted Zone (Route53 - fallback si no Cloudflare)
+# If it doesn't exist, we'll create one
+# =============================================================================
 data "aws_route53_zone" "main" {
   name         = var.hosted_zone_name
   private_zone = false
+
+  # Don't fail if zone doesn't exist, we'll create it
+  depends_on = [aws_route53_zone.main]
+}
+
+# -----------------------------------------------------------------------------
+# Resource: Create Hosted Zone if it doesn't exist
+# This will be created automatically
+# -----------------------------------------------------------------------------
+resource "aws_route53_zone" "main" {
+  name          = var.hosted_zone_name
+  comment       = "Hosted zone for ${var.project_name}"
+  force_destroy = false
+
+  tags = {
+    Name        = var.hosted_zone_name
+    Environment = var.environment
+    Project     = var.project_name
+  }
 }
 
 # -----------------------------------------------------------------------------
@@ -57,35 +88,90 @@ resource "aws_acm_certificate" "cert_regional" {
 }
 
 # -----------------------------------------------------------------------------
-# DNS Validation Records
-# -----------------------------------------------------------------------------
+# =============================================================================
+# DNS Validation Records - Cloudflare Version
+# =============================================================================
+resource "cloudflare_record" "cert_validation" {
+  count = var.use_cloudflare ? 1 : 0
+
+  zone_id = data.cloudflare_zone.main[0].id
+  name    = trimprefix(element(tolist(aws_acm_certificate.cert.domain_validation_options), 0).resource_record_name, "${var.domain_name}.")
+  content = element(tolist(aws_acm_certificate.cert.domain_validation_options), 0).resource_record_value
+  type    = element(tolist(aws_acm_certificate.cert.domain_validation_options), 0).resource_record_type
+  ttl     = 60
+}
+
+# =============================================================================
+# DNS Validation Records - Route53 Version (fallback)
+# =============================================================================
 resource "aws_route53_record" "cert_validation" {
-  for_each = {
-    for dvo in aws_acm_certificate.cert.domain_validation_options : dvo.domain_name => {
-      name   = dvo.resource_record_name
-      record = dvo.resource_record_value
-      type   = dvo.resource_record_type
-    }
-  }
+  count = !var.use_cloudflare ? 1 : 0
 
   allow_overwrite = true
-  name            = each.value.name
-  records         = [each.value.record]
+  name            = element(tolist(aws_acm_certificate.cert.domain_validation_options), 0).resource_record_name
+  records         = [element(tolist(aws_acm_certificate.cert.domain_validation_options), 0).resource_record_value]
   ttl             = 60
-  type            = each.value.type
-  zone_id         = data.aws_route53_zone.main.zone_id
+  type            = element(tolist(aws_acm_certificate.cert.domain_validation_options), 0).resource_record_type
+  zone_id         = aws_route53_zone.main.zone_id
 }
 
 # -----------------------------------------------------------------------------
-# ACM Certificate Validation
-# -----------------------------------------------------------------------------
+# =============================================================================
+# ACM Certificate Validation with Cloudflare
+# =============================================================================
 resource "aws_acm_certificate_validation" "cert" {
-  provider                = aws.us_east_1
+  provider = aws.us_east_1
+  count    = var.use_cloudflare ? 1 : 0
+
   certificate_arn         = aws_acm_certificate.cert.arn
-  validation_record_fqdns = [for record in aws_route53_record.cert_validation : record.fqdn]
+  validation_record_fqdns = ["${cloudflare_record.cert_validation[0].hostname}"]
+
+  timeouts {
+    create = "15m"
+  }
+
+  depends_on = [cloudflare_record.cert_validation]
 }
 
 resource "aws_acm_certificate_validation" "cert_regional" {
+  count = var.use_cloudflare ? 1 : 0
+
   certificate_arn         = aws_acm_certificate.cert_regional.arn
-  validation_record_fqdns = [for record in aws_route53_record.cert_validation : record.fqdn]
+  validation_record_fqdns = ["${cloudflare_record.cert_validation[0].hostname}"]
+
+  timeouts {
+    create = "15m"
+  }
+
+  depends_on = [cloudflare_record.cert_validation]
+}
+
+# =============================================================================
+# ACM Certificate Validation with Route53 (fallback)
+# =============================================================================
+resource "aws_acm_certificate_validation" "cert_route53" {
+  provider = aws.us_east_1
+  count    = !var.use_cloudflare ? 1 : 0
+
+  certificate_arn         = aws_acm_certificate.cert.arn
+  validation_record_fqdns = [aws_route53_record.cert_validation[0].fqdn]
+
+  timeouts {
+    create = "15m"
+  }
+
+  depends_on = [aws_route53_record.cert_validation]
+}
+
+resource "aws_acm_certificate_validation" "cert_regional_route53" {
+  count = !var.use_cloudflare ? 1 : 0
+
+  certificate_arn         = aws_acm_certificate.cert_regional.arn
+  validation_record_fqdns = [aws_route53_record.cert_validation[0].fqdn]
+
+  timeouts {
+    create = "15m"
+  }
+
+  depends_on = [aws_route53_record.cert_validation]
 }

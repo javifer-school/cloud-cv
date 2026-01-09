@@ -50,3 +50,8 @@ variable "allowed_origins" {
   type        = list(string)
   default     = ["*"]
 }
+
+variable "lambda_role_arn" {
+  description = "ARN of the existing IAM role for Lambda function"
+  type        = string
+}

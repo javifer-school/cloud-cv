@@ -10,6 +10,10 @@ terraform {
       source  = "hashicorp/archive"
       version = "~> 2.0"
     }
+    cloudflare = {
+      source  = "cloudflare/cloudflare"
+      version = "~> 4.0"
+    }
   }
 }
 
@@ -37,4 +41,9 @@ provider "aws" {
       ManagedBy   = "Terraform"
     }
   }
+}
+
+# Provider para Cloudflare DNS
+provider "cloudflare" {
+  api_token = var.cloudflare_api_token
 }

@@ -1,66 +1,8 @@
 # =============================================================================
 # Lambda Module - Visit Counter Function + API Gateway
 # =============================================================================
-
-# -----------------------------------------------------------------------------
-# IAM Role for Lambda
-# -----------------------------------------------------------------------------
-resource "aws_iam_role" "lambda_role" {
-  name = "${var.function_name}-role"
-
-  assume_role_policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Action = "sts:AssumeRole"
-        Effect = "Allow"
-        Principal = {
-          Service = "lambda.amazonaws.com"
-        }
-      }
-    ]
-  })
-
-  tags = {
-    Name        = "${var.function_name}-role"
-    Environment = var.environment
-    Project     = var.project_name
-  }
-}
-
-# -----------------------------------------------------------------------------
-# IAM Policy for Lambda (CloudWatch Logs + DynamoDB)
-# -----------------------------------------------------------------------------
-resource "aws_iam_role_policy" "lambda_policy" {
-  name = "${var.function_name}-policy"
-  role = aws_iam_role.lambda_role.id
-
-  policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Effect = "Allow"
-        Action = [
-          "logs:CreateLogGroup",
-          "logs:CreateLogStream",
-          "logs:PutLogEvents"
-        ]
-        Resource = "arn:aws:logs:*:*:*"
-      },
-      {
-        Effect = "Allow"
-        Action = [
-          "dynamodb:GetItem",
-          "dynamodb:PutItem",
-          "dynamodb:UpdateItem",
-          "dynamodb:Scan",
-          "dynamodb:Query"
-        ]
-        Resource = var.dynamodb_arn
-      }
-    ]
-  })
-}
+# Note: Using existing IAM role from AWS CLI (Learner Lab)
+# No IAM resources are created in this module
 
 # -----------------------------------------------------------------------------
 # Lambda Function
@@ -74,7 +16,7 @@ data "archive_file" "lambda_zip" {
 resource "aws_lambda_function" "visit_counter" {
   filename         = data.archive_file.lambda_zip.output_path
   function_name    = var.function_name
-  role             = aws_iam_role.lambda_role.arn
+  role             = var.lambda_role_arn
   handler          = "handler.lambda_handler"
   source_code_hash = data.archive_file.lambda_zip.output_base64sha256
   runtime          = var.runtime

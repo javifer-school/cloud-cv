@@ -96,3 +96,25 @@ variable "lambda_timeout" {
   type        = number
   default     = 10
 }
+
+variable "lambda_role_arn" {
+  description = "ARN of the existing IAM role for Lambda (required for AWS Learner Lab)"
+  type        = string
+}
+
+# =============================================================================
+# Cloudflare Variables
+# =============================================================================
+
+variable "cloudflare_api_token" {
+  description = "Cloudflare API token for DNS management"
+  type        = string
+  sensitive   = true
+  default     = ""
+}
+
+variable "cloudflare_zone_id" {
+  description = "Cloudflare zone ID for the domain"
+  type        = string
+  default     = ""
+}
