@@ -1,7 +1,4 @@
-# =============================================================================
-# DynamoDB Module - Visit Counter Table
-# =============================================================================
-
+# DynamoDB table for visit counter
 resource "aws_dynamodb_table" "visit_counter" {
   name         = var.table_name
   billing_mode = "PAY_PER_REQUEST"
@@ -12,21 +9,8 @@ resource "aws_dynamodb_table" "visit_counter" {
     type = "S"
   }
 
-  # Point-in-time recovery for backups
-  point_in_time_recovery {
-    enabled = true
-  }
-
-  # Server-side encryption
-  server_side_encryption {
-    enabled = true
-  }
-
-  # TTL for automatic cleanup (optional - disabled by default)
-  ttl {
-    attribute_name = "ttl"
-    enabled        = false
-  }
+  point_in_time_recovery { enabled = true }
+  server_side_encryption { enabled = true }
 
   tags = {
     Name        = var.table_name
@@ -34,16 +18,3 @@ resource "aws_dynamodb_table" "visit_counter" {
     Project     = var.project_name
   }
 }
-
-# -----------------------------------------------------------------------------
-# Global Secondary Index for querying by date (optional future enhancement)
-# -----------------------------------------------------------------------------
-# Uncomment if needed for date-based queries
-# resource "aws_dynamodb_table" "visit_counter_with_gsi" {
-#   ...
-#   global_secondary_index {
-#     name            = "last_visit_index"
-#     hash_key        = "visit_date"
-#     projection_type = "ALL"
-#   }
-# }

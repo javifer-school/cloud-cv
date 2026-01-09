@@ -1,9 +1,5 @@
-# =============================================================================
-# Amplify Module - Variables
-# =============================================================================
-
 variable "app_name" {
-  description = "Name of the Amplify app"
+  description = "Amplify app name"
   type        = string
 }
 
@@ -19,18 +15,13 @@ variable "github_branch" {
 }
 
 variable "github_token" {
-  description = "GitHub personal access token (required for automated builds)"
+  description = "GitHub personal access token"
   type        = string
   sensitive   = true
 }
 
 variable "domain_name" {
   description = "Custom domain name"
-  type        = string
-}
-
-variable "certificate_arn" {
-  description = "ARN of the ACM certificate"
   type        = string
 }
 
@@ -45,6 +36,6 @@ variable "environment" {
 }
 
 variable "project_name" {
-  description = "Project name for tagging"
+  description = "Project name"
   type        = string
 }

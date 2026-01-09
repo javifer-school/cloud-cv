@@ -1,9 +1,5 @@
-# =============================================================================
-# Lambda Module - Variables
-# =============================================================================
-
 variable "function_name" {
-  description = "Name of the Lambda function"
+  description = "Lambda function name"
   type        = string
 }
 
@@ -26,12 +22,7 @@ variable "timeout" {
 }
 
 variable "dynamodb_table" {
-  description = "Name of the DynamoDB table"
-  type        = string
-}
-
-variable "dynamodb_arn" {
-  description = "ARN of the DynamoDB table"
+  description = "DynamoDB table name"
   type        = string
 }
 
@@ -41,17 +32,17 @@ variable "environment" {
 }
 
 variable "project_name" {
-  description = "Project name for tagging"
+  description = "Project name"
   type        = string
 }
 
 variable "allowed_origins" {
-  description = "List of allowed CORS origins"
+  description = "Allowed CORS origins"
   type        = list(string)
   default     = ["*"]
 }
 
 variable "lambda_role_arn" {
-  description = "ARN of the existing IAM role for Lambda function"
+  description = "IAM role ARN for Lambda"
   type        = string
 }

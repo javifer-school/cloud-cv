@@ -1,14 +1,15 @@
-# =============================================================================
-# DNS Module - Variables
-# =============================================================================
-
 variable "domain_name" {
-  description = "Full domain name for the website"
+  description = "Full domain name"
   type        = string
 }
 
 variable "hosted_zone_name" {
-  description = "Name of the Route53 hosted zone (parent domain)"
+  description = "Parent domain name"
+  type        = string
+}
+
+variable "cloudflare_zone_id" {
+  description = "Cloudflare zone ID"
   type        = string
 }
 
@@ -18,12 +19,6 @@ variable "environment" {
 }
 
 variable "project_name" {
-  description = "Project name for tagging"
+  description = "Project name"
   type        = string
-}
-
-variable "use_cloudflare" {
-  description = "Use Cloudflare DNS instead of Route53"
-  type        = bool
-  default     = false
 }

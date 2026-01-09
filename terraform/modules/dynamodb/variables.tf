@@ -1,9 +1,5 @@
-# =============================================================================
-# DynamoDB Module - Variables
-# =============================================================================
-
 variable "table_name" {
-  description = "Name of the DynamoDB table"
+  description = "DynamoDB table name"
   type        = string
 }
 
@@ -13,6 +9,6 @@ variable "environment" {
 }
 
 variable "project_name" {
-  description = "Project name for tagging"
+  description = "Project name"
   type        = string
 }

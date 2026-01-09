@@ -4,12 +4,14 @@
  * 
  * This script handles the visitor counter functionality for the Cloud CV.
  * It communicates with the AWS Lambda function through API Gateway.
+ * 
+ * Requires: config.js to be loaded in the HTML
  */
 
-// API Configuration
-// This will be replaced by the actual API endpoint after Terraform deployment
-const API_ENDPOINT = window.API_ENDPOINT || 'https://YOUR_API_ID.execute-api.eu-west-1.amazonaws.com';
-const VISITS_URL = `${API_ENDPOINT}/visits`;
+// API Configuration loaded from generated config.js
+const CONFIG = window.__CONFIG__ || {};
+const API_ENDPOINT = CONFIG.API_ENDPOINT || '';
+const VISITS_URL = API_ENDPOINT ? `${API_ENDPOINT}/visits` : '';
 
 /**
  * Display the visitor count on the page
@@ -114,12 +116,12 @@ function isNewSession() {
  */
 function initVisitorCounter() {
     // Check if API endpoint is configured
-    if (VISITS_URL.includes('YOUR_API_ID')) {
+    if (!API_ENDPOINT) {
         const counterElement = document.getElementById('visitor-count');
         if (counterElement) {
             counterElement.innerHTML = '🔧 API no configurada - Despliega con Terraform primero';
         }
-        console.warn('API endpoint not configured. Please deploy infrastructure first.');
+        console.warn('API endpoint not configured. Configuration:', CONFIG);
         return;
     }
 
