@@ -1,18 +1,11 @@
-# =============================================================================
-# Lambda Module - Visit Counter Function + API Gateway
-# =============================================================================
-# Note: Using existing IAM role from AWS CLI (Learner Lab)
-# No IAM resources are created in this module
-
-# -----------------------------------------------------------------------------
-# Lambda Function
-# -----------------------------------------------------------------------------
+# Lambda function package
 data "archive_file" "lambda_zip" {
   type        = "zip"
   source_dir  = "${path.root}/../lambda/visit_counter"
   output_path = "${path.root}/../lambda/visit_counter.zip"
 }
 
+# Lambda function
 resource "aws_lambda_function" "visit_counter" {
   filename         = data.archive_file.lambda_zip.output_path
   function_name    = var.function_name
@@ -37,13 +30,10 @@ resource "aws_lambda_function" "visit_counter" {
   }
 }
 
-# -----------------------------------------------------------------------------
-# CloudWatch Log Group for Lambda
-# -----------------------------------------------------------------------------
+# CloudWatch Log Group
 resource "aws_cloudwatch_log_group" "lambda_logs" {
   name              = "/aws/lambda/${var.function_name}"
   retention_in_days = 14
-
   tags = {
     Name        = "${var.function_name}-logs"
     Environment = var.environment
@@ -51,9 +41,7 @@ resource "aws_cloudwatch_log_group" "lambda_logs" {
   }
 }
 
-# -----------------------------------------------------------------------------
 # API Gateway HTTP API
-# -----------------------------------------------------------------------------
 resource "aws_apigatewayv2_api" "api" {
   name          = "${var.project_name}-api"
   protocol_type = "HTTP"
@@ -63,7 +51,6 @@ resource "aws_apigatewayv2_api" "api" {
     allow_headers     = ["Content-Type", "X-Forwarded-For"]
     allow_methods     = ["GET", "POST", "OPTIONS"]
     allow_origins     = var.allowed_origins
-    expose_headers    = []
     max_age           = 300
   }
 
@@ -74,9 +61,7 @@ resource "aws_apigatewayv2_api" "api" {
   }
 }
 
-# -----------------------------------------------------------------------------
 # API Gateway Stage
-# -----------------------------------------------------------------------------
 resource "aws_apigatewayv2_stage" "default" {
   api_id      = aws_apigatewayv2_api.api.id
   name        = "$default"
@@ -85,13 +70,12 @@ resource "aws_apigatewayv2_stage" "default" {
   access_log_settings {
     destination_arn = aws_cloudwatch_log_group.api_logs.arn
     format = jsonencode({
-      requestId      = "$context.requestId"
-      ip             = "$context.identity.sourceIp"
-      requestTime    = "$context.requestTime"
-      httpMethod     = "$context.httpMethod"
-      routeKey       = "$context.routeKey"
-      status         = "$context.status"
-      responseLength = "$context.responseLength"
+      requestId   = "$context.requestId"
+      ip          = "$context.identity.sourceIp"
+      requestTime = "$context.requestTime"
+      httpMethod  = "$context.httpMethod"
+      routeKey    = "$context.routeKey"
+      status      = "$context.status"
     })
   }
 
@@ -102,13 +86,10 @@ resource "aws_apigatewayv2_stage" "default" {
   }
 }
 
-# -----------------------------------------------------------------------------
 # CloudWatch Log Group for API Gateway
-# -----------------------------------------------------------------------------
 resource "aws_cloudwatch_log_group" "api_logs" {
   name              = "/aws/apigateway/${var.project_name}-api"
   retention_in_days = 14
-
   tags = {
     Name        = "${var.project_name}-api-logs"
     Environment = var.environment
@@ -116,9 +97,7 @@ resource "aws_cloudwatch_log_group" "api_logs" {
   }
 }
 
-# -----------------------------------------------------------------------------
-# Lambda Integration with API Gateway
-# -----------------------------------------------------------------------------
+# Lambda Integration
 resource "aws_apigatewayv2_integration" "lambda" {
   api_id                 = aws_apigatewayv2_api.api.id
   integration_type       = "AWS_PROXY"
@@ -126,9 +105,7 @@ resource "aws_apigatewayv2_integration" "lambda" {
   payload_format_version = "2.0"
 }
 
-# -----------------------------------------------------------------------------
-# API Gateway Routes
-# -----------------------------------------------------------------------------
+# API Routes
 resource "aws_apigatewayv2_route" "get_visits" {
   api_id    = aws_apigatewayv2_api.api.id
   route_key = "GET /visits"
@@ -141,9 +118,7 @@ resource "aws_apigatewayv2_route" "post_visits" {
   target    = "integrations/${aws_apigatewayv2_integration.lambda.id}"
 }
 
-# -----------------------------------------------------------------------------
 # Lambda Permission for API Gateway
-# -----------------------------------------------------------------------------
 resource "aws_lambda_permission" "api_gateway" {
   statement_id  = "AllowAPIGatewayInvoke"
   action        = "lambda:InvokeFunction"
