@@ -18,6 +18,9 @@ __pycache__/
 htmlcov/
 coverage.xml
 
+# Frontend - Generated config
+curriculum/config.js
+
 # IDE
 .vscode/
 .idea/

@@ -8,6 +8,10 @@ resource "aws_amplify_app" "cv_app" {
     version: 1
     frontend:
       phases:
+        pre_build:
+          commands:
+            - echo "Generating runtime configuration..."
+            - bash ../../scripts/generate-config.sh
         build:
           commands:
             - echo "Building static site..."
