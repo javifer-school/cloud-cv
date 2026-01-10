@@ -19,6 +19,7 @@ import os
 import logging
 from datetime import datetime, timezone
 from typing import Any
+from decimal import Decimal
 
 import boto3
 from botocore.exceptions import ClientError
@@ -31,6 +32,13 @@ logger.setLevel(logging.INFO)
 dynamodb = boto3.resource('dynamodb')
 TABLE_NAME = os.environ.get('DYNAMODB_TABLE', 'cv-visit-counter')
 ALLOWED_ORIGINS = os.environ.get('ALLOWED_ORIGINS', '*').split(',')
+
+
+class DecimalEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, Decimal):
+            return int(obj)
+        return super(DecimalEncoder, self).default(obj)
 
 
 def get_table():
@@ -120,7 +128,7 @@ def response(status_code: int, body: dict, event: dict) -> dict:
     return {
         'statusCode': status_code,
         'headers': get_cors_headers(event),
-        'body': json.dumps(body)
+        'body': json.dumps(body, cls=DecimalEncoder)
     }
 
 
