@@ -56,7 +56,7 @@ resource "aws_amplify_branch" "main" {
   }
 }
 
-# Amplify Domain Association 
+# Amplify Domain Association
 resource "aws_amplify_domain_association" "cv_domain" {
   app_id                = aws_amplify_app.cv_app.id
   domain_name           = var.domain_name
