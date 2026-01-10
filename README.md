@@ -102,18 +102,22 @@ Para más detalles sobre secretos, ver [CICD_GUIDE.md](CICD_GUIDE.md)
 git clone https://github.com/javifer-school/cloud-cv.git
 cd cloud-cv
 
-# 2. Inicializar Terraform
-cd terraform
-terraform init
+# 2. Inicializar Terraform con S3 backend (UNA VEZ)
+./scripts/init.sh
 
 # 3. Planificar
-terraform plan -var="github_token=YOUR_TOKEN"
+cd terraform
+terraform plan
 
 # 4. Aplicar
-terraform apply -var="github_token=YOUR_TOKEN"
+terraform apply
 ```
 
-**⚠️ IMPORTANTE**: El `github_token` es **OBLIGATORIO** para los builds automáticos de Amplify.
+**📝 Notas importantes:**
+- El script `init.sh` configura automáticamente el backend S3
+- Solo necesitas ejecutarlo **una vez** por cuenta AWS
+- Las variables sensibles se cargan desde el archivo `terraform.tfvars` localmente
+- En CI/CD, las variables sensibles vienen de secrets de GitHub
 
 ### Despliegue Automático (CI/CD)
 

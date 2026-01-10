@@ -40,6 +40,10 @@ jobs:
           aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
           aws-region: ${{ env.AWS_REGION }}
 
+      - name: Setup S3 Backend
+        run: ./scripts/init.sh --ci
+        shell: bash
+
       - name: Terraform Init
         run: terraform init
         working-directory: terraform
