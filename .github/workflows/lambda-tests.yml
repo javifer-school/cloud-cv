@@ -17,6 +17,9 @@ on:
 
 env:
   PYTHON_VERSION: '3.11'
+  AWS_DEFAULT_REGION: 'us-east-1'
+  AWS_ACCESS_KEY_ID: 'testing'
+  AWS_SECRET_ACCESS_KEY: 'testing'
 
 jobs:
   test:

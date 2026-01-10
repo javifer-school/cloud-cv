@@ -28,10 +28,18 @@ from botocore.exceptions import ClientError
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
-# Initialize DynamoDB client 
-dynamodb = boto3.resource('dynamodb')
+# DynamoDB configuration (initialized lazily to avoid import issues in testing)
 TABLE_NAME = os.environ.get('DYNAMODB_TABLE', 'cv-visit-counter')
 ALLOWED_ORIGINS = os.environ.get('ALLOWED_ORIGINS', '*').split(',')
+_dynamodb = None  # Lazy initialization
+
+
+def get_dynamodb():
+    """Get DynamoDB resource (lazy initialization)."""
+    global _dynamodb
+    if _dynamodb is None:
+        _dynamodb = boto3.resource('dynamodb')
+    return _dynamodb
 
 
 class DecimalEncoder(json.JSONEncoder):
@@ -43,6 +51,7 @@ class DecimalEncoder(json.JSONEncoder):
 
 def get_table():
     """Get DynamoDB table resource."""
+    dynamodb = get_dynamodb()
     return dynamodb.Table(TABLE_NAME)
 
 
