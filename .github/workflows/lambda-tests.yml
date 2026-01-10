@@ -1,0 +1,62 @@
+# ============================================================================
+# Lambda Tests Pipeline
+# ============================================================================
+# Runs pytest tests whenever there are changes in the lambda/ directory.
+# Includes code coverage reporting.
+
+name: Lambda Tests
+
+on:
+  push:
+    branches: [main]
+    paths: ['lambda/**']
+  pull_request:
+    branches: [main]
+    paths: ['lambda/**']
+  workflow_dispatch:
+
+env:
+  PYTHON_VERSION: '3.11'
+
+jobs:
+  test:
+    name: Run Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: 'pip'
+
+      - name: Install Dependencies
+        run: |
+          cd lambda
+          pip install -r tests/requirements-test.txt
+          pip install -r visit_counter/requirements.txt
+
+      - name: Run Tests
+        run: |
+          cd lambda
+          pytest tests/ -v --cov=visit_counter --cov-report=term-missing --cov-report=xml
+        
+      - name: Upload Coverage Reports
+        uses: codecov/codecov-action@v3
+        with:
+          files: ./lambda/coverage.xml
+          flags: unittests
+          name: Lambda Coverage
+          fail_ci_if_error: false
+
+      - name: Comment PR with Coverage
+        if: github.event_name == 'pull_request'
+        run: |
+          cd lambda
+          COVERAGE=$(pytest tests/ -q --cov=visit_counter --cov-report=term-missing | tail -1 | awk '{print $NF}')
+          echo "### 📊 Coverage Report" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Coverage:** ${COVERAGE}" >> $GITHUB_STEP_SUMMARY

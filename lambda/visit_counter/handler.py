@@ -9,7 +9,7 @@ Endpoints:
 - GET /visits: Get total visits and visitor's visit count
 - POST /visits: Register a new visit
 
-Environment Variables:
+Environment Variables: 
 - DYNAMODB_TABLE: Name of the DynamoDB table
 - ALLOWED_ORIGINS: Comma-separated list of allowed CORS origins
 """
