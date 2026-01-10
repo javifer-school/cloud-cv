@@ -32,5 +32,5 @@ lambda_timeout       = 10
 lambda_role_arn = "arn:aws:iam::ACCOUNT_ID:role/LabRole"
 
 # Cloudflare Configuration (Optional - leave empty to use Route53)
-# cloudflare_api_token = "xxxxxxxxxxxxxxxxxxx"  # Set via TF_VAR_cloudflare_api_token or -var flag
-# cloudflare_zone_id   = "xxxxxxxxxxxxx"        # Set via TF_VAR_cloudflare_zone_id or -var flag
+cloudflare_api_token = "xxxxxxxxxxxxxxxxxxx"  # Set via TF_VAR_cloudflare_api_token or -var flag
+cloudflare_zone_id   = "xxxxxxxxxxxxx"        # Set via TF_VAR_cloudflare_zone_id or -var flag
