@@ -121,12 +121,13 @@ fi
 # Remove backend resources from state (they're managed by init.sh with AWS CLI, not Terraform)
 log_section "Cleaning up Terraform State"
 log_info "Removing backend infrastructure resources from state..."
-terraform state rm 'aws_s3_bucket.terraform_state' 2>/dev/null || true
-terraform state rm 'aws_s3_bucket_versioning.terraform_state' 2>/dev/null || true
-terraform state rm 'aws_s3_bucket_server_side_encryption_configuration.terraform_state' 2>/dev/null || true
-terraform state rm 'aws_s3_bucket_public_access_block.terraform_state' 2>/dev/null || true
-terraform state rm 'aws_dynamodb_table.terraform_locks' 2>/dev/null || true
-terraform state rm 'data.aws_caller_identity.current' 2>/dev/null || true
+# Silently remove resources if they exist (errors are suppressed)
+terraform state rm 'aws_s3_bucket.terraform_state' >/dev/null 2>&1 || true
+terraform state rm 'aws_s3_bucket_versioning.terraform_state' >/dev/null 2>&1 || true
+terraform state rm 'aws_s3_bucket_server_side_encryption_configuration.terraform_state' >/dev/null 2>&1 || true
+terraform state rm 'aws_s3_bucket_public_access_block.terraform_state' >/dev/null 2>&1 || true
+terraform state rm 'aws_dynamodb_table.terraform_locks' >/dev/null 2>&1 || true
+terraform state rm 'data.aws_caller_identity.current' >/dev/null 2>&1 || true
 log_info "Backend resources removed from state (still exist in AWS, managed outside Terraform)"
 
 # Summary
