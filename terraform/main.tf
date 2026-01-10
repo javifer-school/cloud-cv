@@ -61,10 +61,10 @@ resource "cloudflare_record" "amplify_cname" {
 
 # Cloudflare DNS record for Amplify certificate verification
 resource "cloudflare_record" "amplify_cert_validation" {
-  zone_id = var.cloudflare_zone_id
-  name    = element(split(" ", module.amplify.certificate_verification_dns_record), 0)
-  type    = element(split(" ", module.amplify.certificate_verification_dns_record), 1)
-  content = element(split(" ", module.amplify.certificate_verification_dns_record), 2)
-  ttl     = 60
+  zone_id    = var.cloudflare_zone_id
+  name       = element(split(" ", module.amplify.certificate_verification_dns_record), 0)
+  type       = element(split(" ", module.amplify.certificate_verification_dns_record), 1)
+  content    = element(split(" ", module.amplify.certificate_verification_dns_record), 2)
+  ttl        = 60
   depends_on = [module.amplify]
 }
