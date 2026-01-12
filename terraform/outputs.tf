@@ -47,6 +47,22 @@ output "certificate_arn" {
   value       = module.dns.certificate_arn
 }
 
+# Route 53 outputs
+output "route53_zone_id" {
+  description = "Route 53 hosted zone ID"
+  value       = module.route53.zone_id
+}
+
+output "route53_zone_name" {
+  description = "Route 53 hosted zone name"
+  value       = module.route53.zone_name
+}
+
+output "route53_nameservers" {
+  description = "Route 53 nameservers (delegated from Cloudflare)"
+  value       = module.route53.nameservers
+}
+
 output "website_url" {
   description = "Website URL"
   value       = "https://${var.domain_name}"

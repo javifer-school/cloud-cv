@@ -20,7 +20,26 @@ module "lambda" {
   allowed_origins = ["https://${var.domain_name}", "http://localhost:3000"]
 }
 
-# DNS module - ACM Certificate + Cloudflare DNS
+# Route 53 module - Hosted zone for subdomain delegation
+module "route53" {
+  source       = "./modules/route53"
+  zone_name    = var.route53_zone_name
+  environment  = var.environment
+  project_name = var.project_name
+  comment      = "Delegated zone from Cloudflare for ${var.project_name}"
+}
+
+# Cloudflare NS records for Route 53 delegation
+resource "cloudflare_record" "route53_delegation" {
+  count   = 4
+  zone_id = var.cloudflare_zone_id
+  name    = trimsuffix(var.route53_zone_name, ".${var.hosted_zone_name}")
+  type    = "NS"
+  content = module.route53.nameservers[count.index]
+  ttl     = 3600
+}
+
+# DNS module - ACM Certificate + Route 53 DNS validation
 module "dns" {
   source = "./modules/dns"
   providers = {
@@ -29,9 +48,11 @@ module "dns" {
   }
   domain_name        = var.domain_name
   hosted_zone_name   = var.hosted_zone_name
+  route53_zone_id    = module.route53.zone_id
   cloudflare_zone_id = var.cloudflare_zone_id
   environment        = var.environment
   project_name       = var.project_name
+  depends_on         = [cloudflare_record.route53_delegation]
 }
 
 # Amplify module - Static website hosting
@@ -48,23 +69,23 @@ module "amplify" {
   depends_on        = [module.dns]
 }
 
-# Cloudflare CNAME record for Amplify domain (CloudFront)
-resource "cloudflare_record" "amplify_cname" {
-  zone_id    = var.cloudflare_zone_id
-  name       = trimsuffix(var.domain_name, ".${var.hosted_zone_name}")
+# Route 53 CNAME record for Amplify domain (CloudFront)
+resource "aws_route53_record" "amplify_cname" {
+  zone_id    = module.route53.zone_id
+  name       = var.domain_name
   type       = "CNAME"
-  content    = module.amplify.cloudfront_dns_record
   ttl        = 300
-  proxied    = false
-  depends_on = [module.amplify]
+  records    = [module.amplify.cloudfront_dns_record]
+  depends_on = [module.amplify, module.dns]
 }
 
-# Cloudflare DNS record for Amplify certificate verification
-resource "cloudflare_record" "amplify_cert_validation" {
-  zone_id    = var.cloudflare_zone_id
-  name       = element(split(" ", module.amplify.certificate_verification_dns_record), 0)
-  type       = element(split(" ", module.amplify.certificate_verification_dns_record), 1)
-  content    = element(split(" ", module.amplify.certificate_verification_dns_record), 2)
-  ttl        = 60
-  depends_on = [module.amplify]
+# Route 53 record for Amplify certificate verification
+resource "aws_route53_record" "amplify_cert_validation" {
+  zone_id         = module.route53.zone_id
+  name            = element(split(" ", module.amplify.certificate_verification_dns_record), 0)
+  type            = element(split(" ", module.amplify.certificate_verification_dns_record), 1)
+  ttl             = 60
+  records         = [element(split(" ", module.amplify.certificate_verification_dns_record), 2)]
+  allow_overwrite = true
+  depends_on      = [module.amplify, module.dns]
 }

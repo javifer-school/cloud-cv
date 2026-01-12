@@ -1,12 +1,9 @@
-# DNS Module - ACM Certificate + Cloudflare DNS validation
+# DNS Module - ACM Certificate + Route 53 DNS validation
 terraform {
   required_providers {
     aws = {
       source                = "hashicorp/aws"
       configuration_aliases = [aws, aws.us_east_1]
-    }
-    cloudflare = {
-      source = "cloudflare/cloudflare"
     }
   }
 }
@@ -36,12 +33,14 @@ resource "aws_acm_certificate" "cert_regional" {
   }
 }
 
-# Cloudflare DNS validation record
-resource "cloudflare_record" "cert_validation" {
-  zone_id = var.cloudflare_zone_id
+# Route 53 DNS validation record - compartida para ambos certificados
+# Ambos certificatos (us-east-1 y regional) tienen el mismo dominio,
+# por lo que comparten el mismo domain_validation_option[0]
+resource "aws_route53_record" "cert_validation" {
+  zone_id = var.route53_zone_id
   name    = element(tolist(aws_acm_certificate.cert.domain_validation_options), 0).resource_record_name
-  content = element(tolist(aws_acm_certificate.cert.domain_validation_options), 0).resource_record_value
   type    = element(tolist(aws_acm_certificate.cert.domain_validation_options), 0).resource_record_type
+  records = [element(tolist(aws_acm_certificate.cert.domain_validation_options), 0).resource_record_value]
   ttl     = 60
 }
 
@@ -49,15 +48,15 @@ resource "cloudflare_record" "cert_validation" {
 resource "aws_acm_certificate_validation" "cert" {
   provider                = aws.us_east_1
   certificate_arn         = aws_acm_certificate.cert.arn
-  validation_record_fqdns = [cloudflare_record.cert_validation.hostname]
+  validation_record_fqdns = [aws_route53_record.cert_validation.fqdn]
   timeouts { create = "15m" }
-  depends_on = [cloudflare_record.cert_validation]
+  depends_on              = [aws_route53_record.cert_validation]
 }
 
-# ACM Certificate validation (regional)
+# ACM Certificate validation (regional) - usa el mismo registro que cert
 resource "aws_acm_certificate_validation" "cert_regional" {
   certificate_arn         = aws_acm_certificate.cert_regional.arn
-  validation_record_fqdns = [cloudflare_record.cert_validation.hostname]
+  validation_record_fqdns = [aws_route53_record.cert_validation.fqdn]
   timeouts { create = "15m" }
-  depends_on = [cloudflare_record.cert_validation]
+  depends_on              = [aws_route53_record.cert_validation]
 }

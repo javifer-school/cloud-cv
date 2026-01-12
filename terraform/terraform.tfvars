@@ -9,8 +9,9 @@ project_name = "cloud-cv"
 environment  = "production"
 
 # Domain Configuration
-domain_name      = "cv.aws10.atercates.cat"
-hosted_zone_name = "atercates.cat"
+domain_name       = "cv.aws.atercates.cat"
+hosted_zone_name  = "atercates.cat"
+route53_zone_name = "aws.atercates.cat"
 
 # GitHub Configuration
 github_repository = "https://github.com/javifer-school/cloud-cv"

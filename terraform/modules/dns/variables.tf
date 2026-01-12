@@ -4,7 +4,12 @@ variable "domain_name" {
 }
 
 variable "hosted_zone_name" {
-  description = "Parent domain name"
+  description = "Parent domain name (Cloudflare)"
+  type        = string
+}
+
+variable "route53_zone_id" {
+  description = "Route 53 zone ID for DNS validation"
   type        = string
 }
 
