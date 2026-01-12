@@ -1,4 +1,4 @@
-# DynamoDB module - Visit counter table
+# DynamoDB module - Visit counter table 
 module "dynamodb" {
   source       = "./modules/dynamodb"
   table_name   = var.dynamodb_table_name
